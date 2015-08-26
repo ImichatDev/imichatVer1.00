@@ -32,13 +32,13 @@ import javax.swing.table.*;
 public class EchoClient {
 	public static final int ECHO_PORT = 25565;
 	public static void main (String[] args) {
-		String log = "[ƒƒO]";
-		Date dat = new Date(); //“ú•t‚ğæ“¾]"; //ƒƒO‚ğİ’è
-		Socket socket = null; //socket‚ğ§ì
+		String log = "[ãƒ­ã‚°]";
+		Date dat = new Date(); //æ—¥ä»˜ã‚’å–å¾—]"; //ãƒ­ã‚°ã‚’è¨­å®š
+		Socket socket = null; //socketã‚’åˆ¶ä½œ
 		try {
 
-			socket = new Socket("localhost", ECHO_PORT); //socket‚ğ§ì
-			Scanner s = new Scanner(System.in); //•¶Í—p‚ÌƒXƒLƒƒƒi[
+			socket = new Socket("localhost", ECHO_PORT); //socketã‚’åˆ¶ä½œ
+			/*Scanner s = new Scanner(System.in); æ–‡ç« ç”¨ã®ã‚¹ã‚­ãƒ£ãƒŠãƒ¼ */
 			JFrame textframe = new JFrame();
 			JLabel label1 = new JLabel();
 			JTextField textfield = new JTextField();
@@ -46,7 +46,7 @@ public class EchoClient {
 			textframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			JPanel tf = new JPanel();
 			JPanel lb = new JPanel();
-			textfield.setSize(450, 10);
+			textfield.setSize(450, 30);
 			tf.add(textfield);
 			lb.add(label1);
 			Container contentpane1 = textframe.getContentPane();
@@ -56,27 +56,27 @@ public class EchoClient {
 			textframe.setVisible(true);
 				
 			
-			System.out.println(log + dat +"Ú‘±‚µ‚Ü‚µ‚½B"
+			System.out.println(log + dat +"æ¥ç¶šã—ã¾ã—ãŸã€‚"
 					+ socket.getRemoteSocketAddress());
-			label1.setText(log + dat + "Ú‘±‚µ‚Ü‚µ‚½B" + socket.getRemoteSocketAddress());
+			label1.setText(log + dat + "æ¥ç¶šã—ã¾ã—ãŸã€‚" + socket.getRemoteSocketAddress());
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			//BufferedReader keyIn = new BufferedReader(new InputStreamReader(System.in));
-			//String success = log + dat + "Ú‘±‚µ‚Ü‚µ‚½B" + socket.getLocalPort();
+			//String success = log + dat + "æ¥ç¶šã—ã¾ã—ãŸã€‚" + socket.getLocalPort();
 			
-			System.out.println("ƒjƒbƒNƒl[ƒ€‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢B");
-			label1.setText("ƒjƒbƒNƒl[ƒ€‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢B");
+			System.out.println("ãƒ‹ãƒƒã‚¯ãƒãƒ¼ãƒ ã‚’è¨­å®šã—ã¦ãã ã•ã„ã€‚");
+			label1.setText("ãƒ‹ãƒƒã‚¯ãƒãƒ¼ãƒ ã‚’è¨­å®šã—ã¦ãã ã•ã„ã€‚");
 			String namaebox = textfield.getText();
-			System.out.println("y•¶š—ñ‚ğ“Ç‚İ‚İ‚Ü‚·Bz");
-			label1.setText("ƒRƒƒ“ƒg‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
-			System.out.println("ƒRƒƒ“ƒg‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
+			System.out.println("ã€æ–‡å­—åˆ—ã‚’èª­ã¿è¾¼ã¿ã¾ã™ã€‚ã€‘");
+			label1.setText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+			System.out.println("ã‚³ãƒ¡ãƒ³ãƒˆã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
 			
 
 			while (true) {
 				//out.println(input);
-				String scann = textfield.getText(); //“ü—Í‚µ‚½•¶Í‚ğscann‚Éİ’è
-				label1.setText("‘—M‚µ‚Ä‚¢‚Ü‚·EEEB");
-				out.println(" " + namaebox + "‚³‚ñ" +"    " + scann);
+				String scann = textfield.getText(); //å…¥åŠ›ã—ãŸæ–‡ç« ã‚’scannã«è¨­å®š
+				label1.setText("é€ä¿¡ã—ã¦ã„ã¾ã™ãƒ»ãƒ»ãƒ»ã€‚");
+                                out.println(" " + namaebox + "ã•ã‚“" +"    " + scann);
 				//String line = in.readLine();
 				String line = textfield.getText();
 				if (line != null) {
@@ -95,7 +95,7 @@ public class EchoClient {
 					socket.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Ø’f‚³‚ê‚Ü‚µ‚½B"
+				System.out.println("åˆ‡æ–­ã•ã‚Œã¾ã—ãŸã€‚"
 						+ socket.getRemoteSocketAddress());
 				}
 		}
