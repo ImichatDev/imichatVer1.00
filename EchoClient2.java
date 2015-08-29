@@ -35,7 +35,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.table.*;
 
-public class EchoClient2 implements ActionListener {
+import java.io.*;
+import java.net.*;
+import java.nio.charset.Charset;
+
+
+public class EchoClient2 extends Thread implements ActionListener {
 	public static final int ECHO_PORT = 25565;
 	        
 	JFrame textframe = new JFrame();
@@ -47,23 +52,54 @@ public class EchoClient2 implements ActionListener {
 
 	String namaebox;
 	Socket socket = null; //socketを制作
-	PrintWriter out;
+    PrintStream os = null;
+    BufferedReader is = null;
 	        
 	public static void main (String[] args) {
+        String host = "localhost";
+        if (args.length > 0) {
+            host = args[0];
+        }
+
 		EchoClient2 client = new EchoClient2();
-		client.createClient();
+		client.createClient(host);
+        client.start();
 	}
-	        
-	private void createClient() {
+
+	public EchoClient2() {
+	}
+    
+    public void run() {
+        try {
+            // サーバーからのメッセージを受け取り画面に表示します
+            String responseLine;
+            while (true) {
+                responseLine = is.readLine();
+                if ("[close]".equals(responseLine) || responseLine == null) {
+                    break;
+                }
+                System.out.println("Server: " + responseLine);
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Trying to connect to unknown host: " + e);
+        } catch (IOException e) {
+            System.err.println("IOException: " + e);
+        }
+    }
+	
+	private void createClient(String host) {
 		String log = "[ログ]";
 		Date dat = new Date(); //日付を取得]"; //ログを設定
 		try {
 
-			socket = new Socket("localhost", ECHO_PORT); //socketを制作
+			socket = new Socket(host, ECHO_PORT); //socketを制作
+	        os = new PrintStream(socket.getOutputStream());
+	        is = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+
 			/*Scanner s = new Scanner(System.in); 文章用のスキャナー */
 			sendb.addActionListener(this);
 			sendb.setText("送信（send）");
-			textframe.setSize(480, 120);
+			textframe.setSize(540, 120);
 			textframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			tf.setSize(440, 50);
 			textfield.setSize(100, 30);
@@ -79,8 +115,6 @@ public class EchoClient2 implements ActionListener {
 			System.out.println(log + dat +"接続しました。"
 				+ socket.getRemoteSocketAddress());
 			label1.setText(log + dat + "接続しました。" + socket.getRemoteSocketAddress());
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new PrintWriter(socket.getOutputStream(), true);
 			//BufferedReader keyIn = new BufferedReader(new InputStreamReader(System.in));
 			//String success = log + dat + "接続しました。" + socket.getLocalPort();
 
@@ -92,34 +126,41 @@ public class EchoClient2 implements ActionListener {
 			System.out.println("コメントを入力してください。");
 
 		} catch (IOException e) {
-		} finally {
-			try {
-				if (socket != null) {
-					socket.close();
-				}
-			} catch (IOException e) {
-				System.out.println("切断されました。"
-					+ socket.getRemoteSocketAddress());
-			}
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		String scann = textfield.getText(); //入力した文章をscannに設定
-		label1.setText("送信しています・・・。");
-		out.println(" " + namaebox + "さん" +"    " + scann);
-		//out.flush();
-		//String line = in.readLine();
-		String line = textfield.getText();
-		if (line != null) {
-			System.out.println(line);
-		} 
+		try {
+			//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			String message = textfield.getText(); //入力した文章をscannに設定
+			if (message == null || message.length() <= 0) {
+				try {
+					if (socket != null) {
+						socket.close();
+					}
+				} catch (IOException err) {
+					System.out.println("切断されました。"
+						+ socket.getRemoteSocketAddress());
+				}
+				return;
+			}
+			System.out.println(message);
 
-		System.out.println("【文字列を読み込みます。】");
-		label1.setText("コメントを入力してください。");
-		System.out.println("コメントを入力してください。");
+			// メッセージを送ります
+			label1.setText("送信しています・・・。");
+			message = " " + namaebox + "さん" + "    " + message + "\n";
+			os.write(message.getBytes(Charset.forName("UTF-8")));
+			os.flush();
+
+			System.out.println("【文字列を読み込みます。】");
+			label1.setText("コメントを入力してください。");
+			System.out.println("コメントを入力してください。");
+		} catch (IOException err) {
+			err.printStackTrace();
+		}
+
 	}
 
 }

@@ -16,6 +16,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+import java.nio.charset.Charset;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -28,81 +31,123 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class EchoServer {
+public class EchoServer extends Thread {
 	public static final int ECHO_PORT = 25565; //ポートを設定（ECHO_PORTはClientで使用）
 	
+    Socket clientSocket = null;
+    static List<PrintStream> streamList = new ArrayList<>();
+
+	static JFrame frame1 = new JFrame();
+	static JTextArea logtx = new JTextArea();
+	static JScrollPane scrollpane = new JScrollPane(logtx);
+	static JTextField textfl = new JTextField();
+	static JPanel logp1 = new JPanel();
+	static JPanel textp1 = new JPanel();
+
 	public static void main(String args[]) {
-		ServerSocket serverSocket = null;
-		Socket socket = null;
-		
+
 		String logdata = "サーバーを開設しています。"; 
-		
-		JFrame frame1 = new JFrame();
+
 		frame1.setSize(960, 480);
-		JTextArea logtx = new JTextArea();
-		JScrollPane scrollpane = new JScrollPane(logtx);
 		logtx.setEditable(false);
 		logtx.setLineWrap(true);
 		logtx.setText(logdata + "\n");
 		logtx.setLineWrap(true);
 		logtx.setSize(940, 300);
-		JTextField textfl = new JTextField();
 		
-		JPanel logp1 = new JPanel();
 		logp1.add(logtx, scrollpane);
-		JPanel textp1 = new JPanel();
 		textp1.add(textfl);
 		
 		Container logpane = frame1.getContentPane();
 		logpane.add(logp1, BorderLayout.NORTH);
 		
-		
-		
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame1.setVisible(true);
 		
-		
-		try {
-			serverSocket = new ServerSocket(ECHO_PORT);
+        // ポート9999番を開く
+        ServerSocket echoServer = null;
+        try {
+            echoServer = new ServerSocket(ECHO_PORT);
 			System.out.println("EchoServerが起動しました。(port="
-					+ serverSocket.getLocalPort() + ")");
-			logtx.append("EchoServerが起動しました。(port="
-					+ serverSocket.getLocalPort() + ")" + "\n");
-			socket = serverSocket.accept();
-			System.out.println("接続されました。"
-					+ socket.getRemoteSocketAddress());
-			logtx.append("接続されました。" + socket.getRemoteSocketAddress() + "\n");
-			Date dat = new Date();
-			String log = "[ログ]";
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			//PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			PrintStream out = new PrintStream(socket.getOutputStream());
-			String line;
-			while ( (line = in.readLine()) != null) {
+					+ echoServer.getLocalPort() + ")");
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+
+        // makeFrame();
+ 
+         // クライアントからの要求を受けるソケットを開く 
+        try {
+            while (true) {
+                Socket clientSocket = echoServer.accept();
+				System.out.println("接続されました。"
+						+ clientSocket.getRemoteSocketAddress());
+				logtx.append("接続されました。" + clientSocket.getRemoteSocketAddress() + "\n");
+                EchoServer server = new EchoServer(clientSocket);
+                server.start();
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    public EchoServer(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+    
+    public void run() {
+        // ソケットや入出力用のストリームの宣言
+        String line;
+        BufferedReader is;
+        
+        try {
+            is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+            streamList.add(new PrintStream(clientSocket.getOutputStream()));
+
+            // クライアントからのメッセージを待ち、受け取ったメッセージをそのまま返す
+            while ((line = is.readLine()) != null) {
+				Date dat = new Date();
+				String log = "[ログ]";
 				System.out.print(log + dat + "　　　" + "" + line + "\n");
 				logtx.append("受信" + log + dat + "　　　" + "" + line + "\n");
-				out.write(line.getBytes());
-				//out.println(line + "\n");
-				//out.flush();
+                System.out.println(line);
+                line = line + "\n";
+                byte[] bytes = line.getBytes(Charset.forName("UTF-8"));
+                for (PrintStream os : streamList) {
+                    os.write(bytes);
+                    os.flush();
+                }
 				logtx.append("送信" + log + dat + "　　　" + "" + line + "\n");
 				System.out.print(log + dat + "　　　" + "" + line + "\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e);
 			System.out.println("エラーが発生しました。");
 			logtx.append("エラーが発生したようです。サーバー側にエラーがあるか、クライアント側が不正に退出した可能性があります。");
-		} finally {
-			try {
-				if(socket != null) {
-					socket.close();
-				}
-			} catch (IOException e) {}
-			try {
-				if (serverSocket != null) {
-					serverSocket.close();
-				}
-			} catch (IOException e) {}
-		}
+        }
+    }
+		
+	static private void makeFrame() {
+		String logdata = "サーバーを開設しています。"; 
+
+		frame1.setSize(960, 480);
+		logtx.setEditable(false);
+		logtx.setLineWrap(true);
+		logtx.setText(logdata + "\n");
+		logtx.setLineWrap(true);
+		logtx.setSize(940, 300);
+		
+		logp1.add(logtx, scrollpane);
+		textp1.add(textfl);
+		
+		Container logpane = frame1.getContentPane();
+		logpane.add(logp1, BorderLayout.NORTH);
+		
+		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame1.setVisible(true);
 	}
-	
+		
 }
