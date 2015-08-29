@@ -2,7 +2,7 @@
  * If you want to modify or alter this program, please contact the development team.
  * If you do if you have discovered a bug in this program, please contact as soon as possible the development team.
  */
-package imichatgit; //ƒpƒbƒP[ƒW•ÏX—\’è
+// package imichatgit; //ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸å¤‰æ›´äºˆå®š
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -29,13 +29,13 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class EchoServer {
-	public static final int ECHO_PORT = 25565; //ƒ|[ƒg‚ğİ’èiECHO_PORT‚ÍClient‚Åg—pj
+	public static final int ECHO_PORT = 25565; //ãƒãƒ¼ãƒˆã‚’è¨­å®šï¼ˆECHO_PORTã¯Clientã§ä½¿ç”¨ï¼‰
 	
 	public static void main(String args[]) {
 		ServerSocket serverSocket = null;
 		Socket socket = null;
 		
-		String logdata = "ƒT[ƒo[‚ğŠJİ‚µ‚Ä‚¢‚Ü‚·B"; 
+		String logdata = "ã‚µãƒ¼ãƒãƒ¼ã‚’é–‹è¨­ã—ã¦ã„ã¾ã™ã€‚"; 
 		
 		JFrame frame1 = new JFrame();
 		frame1.setSize(960, 480);
@@ -64,33 +64,33 @@ public class EchoServer {
 		
 		try {
 			serverSocket = new ServerSocket(ECHO_PORT);
-			System.out.println("EchoServer‚ª‹N“®‚µ‚Ü‚µ‚½B(port="
+			System.out.println("EchoServerãŒèµ·å‹•ã—ã¾ã—ãŸã€‚(port="
 					+ serverSocket.getLocalPort() + ")");
-			logtx.append("EchoServer‚ª‹N“®‚µ‚Ü‚µ‚½B(port="
+			logtx.append("EchoServerãŒèµ·å‹•ã—ã¾ã—ãŸã€‚(port="
 					+ serverSocket.getLocalPort() + ")" + "\n");
 			socket = serverSocket.accept();
-			System.out.println("Ú‘±‚³‚ê‚Ü‚µ‚½B"
+			System.out.println("æ¥ç¶šã•ã‚Œã¾ã—ãŸã€‚"
 					+ socket.getRemoteSocketAddress());
-			logtx.append("Ú‘±‚³‚ê‚Ü‚µ‚½B" + socket.getRemoteSocketAddress() + "\n");
+			logtx.append("æ¥ç¶šã•ã‚Œã¾ã—ãŸã€‚" + socket.getRemoteSocketAddress() + "\n");
 			Date dat = new Date();
-			String log = "[ƒƒO]";
+			String log = "[ãƒ­ã‚°]";
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			//PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			PrintStream out = new PrintStream(socket.getOutputStream());
 			String line;
 			while ( (line = in.readLine()) != null) {
-				System.out.print(log + dat + "@@@" + "" + line + "\n");
-				logtx.append("óM" + log + dat + "@@@" + "" + line + "\n");
+				System.out.print(log + dat + "ã€€ã€€ã€€" + "" + line + "\n");
+				logtx.append("å—ä¿¡" + log + dat + "ã€€ã€€ã€€" + "" + line + "\n");
 				out.write(line.getBytes());
 				//out.println(line + "\n");
 				//out.flush();
-				logtx.append("‘—M" + log + dat + "@@@" + "" + line + "\n");
-				System.out.print(log + dat + "@@@" + "" + line + "\n");
+				logtx.append("é€ä¿¡" + log + dat + "ã€€ã€€ã€€" + "" + line + "\n");
+				System.out.print(log + dat + "ã€€ã€€ã€€" + "" + line + "\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B");
-			logtx.append("ƒGƒ‰[‚ª”­¶‚µ‚½‚æ‚¤‚Å‚·BƒT[ƒo[‘¤‚ÉƒGƒ‰[‚ª‚ ‚é‚©AƒNƒ‰ƒCƒAƒ“ƒg‘¤‚ª•s³‚É‘Şo‚µ‚½‰Â”\«‚ª‚ ‚è‚Ü‚·B");
+			System.out.println("ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚");
+			logtx.append("ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã‚ˆã†ã§ã™ã€‚ã‚µãƒ¼ãƒãƒ¼å´ã«ã‚¨ãƒ©ãƒ¼ãŒã‚ã‚‹ã‹ã€ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆå´ãŒä¸æ­£ã«é€€å‡ºã—ãŸå¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚");
 		} finally {
 			try {
 				if(socket != null) {
