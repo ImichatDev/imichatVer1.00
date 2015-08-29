@@ -3,7 +3,7 @@
  * If you do if you have discovered a bug in this program, please contact as soon as possible the development team.
  */
 
-// package imichatgit;
+package imichatgit;
 
 import java.lang.Object;
 

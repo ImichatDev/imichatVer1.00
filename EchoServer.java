@@ -2,7 +2,7 @@
  * If you want to modify or alter this program, please contact the development team.
  * If you do if you have discovered a bug in this program, please contact as soon as possible the development team.
  */
-// package imichatgit; //パッケージ変更予定
+package imichatgit; //パッケージ変更予定
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -63,7 +63,7 @@ public class EchoServer extends Thread {
 		
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame1.setVisible(true);
-		
+
         // ポート9999番を開く
         ServerSocket echoServer = null;
         try {
