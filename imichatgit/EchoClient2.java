@@ -124,7 +124,6 @@ public class EchoClient2 extends Thread implements ActionListener {
 			label1.setText(log + dat + "接続しました。" + socket.getRemoteSocketAddress());
 			//BufferedReader keyIn = new BufferedReader(new InputStreamReader(System.in));
 			//String success = log + dat + "接続しました。" + socket.getLocalPort();
-
 			namaebox = namaeran.getText();
 			System.out.println("【文字列を読み込みます。】");
 			label1.setText("コメントを入力してください。");
@@ -155,6 +154,7 @@ public class EchoClient2 extends Thread implements ActionListener {
 
 			// メッセージを送ります
 			label1.setText("送信しています・・・。");
+			namaebox = namaeran.getText();
 			message = " " + namaebox + "さん" + "    " + message + "\n";
 			os.write(message.getBytes(Charset.forName("UTF-8")));
 			os.flush();
@@ -164,6 +164,7 @@ public class EchoClient2 extends Thread implements ActionListener {
 			System.out.println("コメントを入力してください。");
 		} catch (IOException err) {
 			err.printStackTrace();
+			System.out.println("鯖が死にました。管理人の気が向いたら直します。");
 		}
 
 	}

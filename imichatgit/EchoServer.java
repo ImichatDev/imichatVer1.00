@@ -30,6 +30,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.border.*;
+
 
 public class EchoServer extends Thread {
 	public static final int ECHO_PORT = 25565; //ポートを設定（ECHO_PORTはClientで使用）
@@ -43,8 +45,16 @@ public class EchoServer extends Thread {
 	static JTextField textfl = new JTextField();
 	static JPanel logp1 = new JPanel();
 	static JPanel textp1 = new JPanel();
+	static Border border;
 
 	public static void main(String args[]) {
+		scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+   	scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	 	scrollpane.setPreferredSize(new Dimension(200, 120));
+
+    	Border border = new BevelBorder(BevelBorder.RAISED);
+    	scrollpane.setBorder(border);
+
 
 		String logdata = "サーバーを開設しています。"; 
 
@@ -56,10 +66,12 @@ public class EchoServer extends Thread {
 		logtx.setSize(940, 300);
 		
 		logp1.add(logtx, scrollpane);
+		//logp1.add(scrollpane);
+
 		textp1.add(textfl);
 		
 		Container logpane = frame1.getContentPane();
-		logpane.add(logp1, BorderLayout.NORTH);
+		logpane.add(logp1, BorderLayout.CENTER);
 		
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame1.setVisible(true);
