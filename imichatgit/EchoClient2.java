@@ -46,7 +46,10 @@ public class EchoClient2 extends Thread implements ActionListener {
 	JFrame textframe = new JFrame();
 	JPanel tf = new JPanel();
 	JPanel lb = new JPanel();
+	JPanel namaep = new JPanel();
 	JLabel label1 = new JLabel();
+	JLabel namael = new JLabel();
+	JTextField namaeran = new JTextField("", 30); 
 	JTextField textfield = new JTextField("", 30);
 	JButton sendb = new JButton();
 
@@ -99,7 +102,7 @@ public class EchoClient2 extends Thread implements ActionListener {
 			/*Scanner s = new Scanner(System.in); 文章用のスキャナー */
 			sendb.addActionListener(this);
 			sendb.setText("送信（send）");
-			textframe.setSize(540, 120);
+			textframe.setSize(540, 180);
 			textframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			tf.setSize(440, 50);
 			textfield.setSize(100, 30);
@@ -108,6 +111,10 @@ public class EchoClient2 extends Thread implements ActionListener {
 			lb.add(label1);
 			Container contentpane1 = textframe.getContentPane();
 			Container contentpane2 = textframe.getContentPane();
+			Container namaepane = textframe.getContentPane();
+			namael.setText("名前を設定してください。");
+			namaepane.add(namael, BorderLayout.EAST);
+			namaepane.add(namaeran, BorderLayout.CENTER);
 			contentpane1.add(tf, BorderLayout.SOUTH);
 			contentpane2.add(lb, BorderLayout.NORTH);
 			textframe.setVisible(true);
@@ -118,9 +125,7 @@ public class EchoClient2 extends Thread implements ActionListener {
 			//BufferedReader keyIn = new BufferedReader(new InputStreamReader(System.in));
 			//String success = log + dat + "接続しました。" + socket.getLocalPort();
 
-			System.out.println("ニックネームを設定してください。");
-			label1.setText("ニックネームを設定してください。");
-			namaebox = textfield.getText();
+			namaebox = namaeran.getText();
 			System.out.println("【文字列を読み込みます。】");
 			label1.setText("コメントを入力してください。");
 			System.out.println("コメントを入力してください。");
