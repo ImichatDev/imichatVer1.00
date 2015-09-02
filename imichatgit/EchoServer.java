@@ -56,6 +56,7 @@ public class EchoServer extends Thread {
     	scrollpane.setBorder(border);
 
 
+
 		String logdata = "サーバーを開設しています。"; 
 
 		frame1.setSize(960, 480);
