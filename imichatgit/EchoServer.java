@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.charset.Charset;
 
+import java.awt.Rectangle;
+
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -31,6 +33,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.*;
+import javax.swing.text.DefaultCaret;
 
 
 public class EchoServer extends Thread {
@@ -41,41 +44,10 @@ public class EchoServer extends Thread {
 
 	static JFrame frame1 = new JFrame();
 	static JTextArea logtx = new JTextArea();
-	static JScrollPane scrollpane = new JScrollPane(logtx);
 	static JTextField textfl = new JTextField();
-	static JPanel logp1 = new JPanel();
-	static JPanel textp1 = new JPanel();
 	static Border border;
 
 	public static void main(String args[]) {
-		scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-   	scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-	 	scrollpane.setPreferredSize(new Dimension(200, 120));
-
-    	Border border = new BevelBorder(BevelBorder.RAISED);
-    	scrollpane.setBorder(border);
-
-
-
-		String logdata = "サーバーを開設しています。"; 
-
-		frame1.setSize(960, 480);
-		logtx.setEditable(false);
-		logtx.setLineWrap(true);
-		logtx.setText(logdata + "\n");
-		logtx.setLineWrap(true);
-		logtx.setSize(940, 300);
-		
-		logp1.add(logtx, scrollpane);
-		//logp1.add(scrollpane);
-
-		textp1.add(textfl);
-		
-		Container logpane = frame1.getContentPane();
-		logpane.add(logp1, BorderLayout.CENTER);
-		
-		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame1.setVisible(true);
 
         // ポート9999番を開く
         ServerSocket echoServer = null;
@@ -88,7 +60,7 @@ public class EchoServer extends Thread {
             System.out.println(e);
         }
 
-        // makeFrame();
+        makeFrame();
  
          // クライアントからの要求を受けるソケットを開く 
         try {
@@ -134,6 +106,8 @@ public class EchoServer extends Thread {
                 }
 				logtx.append("送信" + log + dat + "　　　" + "" + line + "\n");
 				System.out.print(log + dat + "　　　" + "" + line + "\n");
+				
+                logtx.setCaretPosition(logtx.getDocument().getLength());
             }
         }
         catch (IOException e) {
@@ -144,23 +118,31 @@ public class EchoServer extends Thread {
     }
 		
 	static private void makeFrame() {
+
 		String logdata = "サーバーを開設しています。"; 
 
-		frame1.setSize(960, 480);
 		logtx.setEditable(false);
 		logtx.setLineWrap(true);
 		logtx.setText(logdata + "\n");
 		logtx.setLineWrap(true);
 		logtx.setSize(940, 300);
 		
-		logp1.add(logtx, scrollpane);
-		textp1.add(textfl);
-		
+		JScrollPane scrollpane = new JScrollPane(logtx);
+		scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+       	scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	 	scrollpane.setPreferredSize(new Dimension(200, 120));
+    	scrollpane.setBorder(new BevelBorder(BevelBorder.RAISED));
+    	
+    	// scrollpane.getViewport().scrollRectToVisible(new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
+
 		Container logpane = frame1.getContentPane();
-		logpane.add(logp1, BorderLayout.NORTH);
-		
+		logpane.add(scrollpane, BorderLayout.CENTER);
+		logpane.add(textfl, BorderLayout.SOUTH);
+
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame1.setSize(960, 480);
 		frame1.setVisible(true);
+
 	}
-		
+	
 }
