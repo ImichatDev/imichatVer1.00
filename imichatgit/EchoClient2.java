@@ -6,7 +6,6 @@
 package imichatgit;
 
 import java.lang.Object;
-
 import java.util.Scanner;
 import java.util.Date;
 import java.awt.BorderLayout;
@@ -14,6 +13,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -30,6 +30,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -41,17 +42,20 @@ import java.nio.charset.Charset;
 
 
 public class EchoClient2 extends Thread implements ActionListener {
-	public static final int ECHO_PORT = 25565;
+	public static final int ECHO_PORT = 30000;
 	        
 	JFrame textframe = new JFrame();
 	JPanel tf = new JPanel();
 	JPanel lb = new JPanel();
+	JPanel textarea = new JPanel();
 	JPanel namaep = new JPanel();
 	JLabel label1 = new JLabel();
 	JLabel namael = new JLabel();
 	JTextField namaeran = new JTextField("", 30); 
 	JTextField textfield = new JTextField("", 30);
 	JButton sendb = new JButton();
+	JTextArea texter = new JTextArea();
+	JScrollPane texters = new JScrollPane(texter);
 
 	String namaebox;
 	Socket socket = null; //socketを制作
@@ -76,12 +80,16 @@ public class EchoClient2 extends Thread implements ActionListener {
         try {
             // サーバーからのメッセージを受け取り画面に表示します
             String responseLine;
+            String responseLine2;
             while (true) {
                 responseLine = is.readLine();
+                responseLine2 = is.readLine();
                 if ("[close]".equals(responseLine) || responseLine == null) {
                     break;
                 }
+    			texter.append("Server:" + responseLine + "\n");
                 System.out.println("Server: " + responseLine);
+
             }
         } catch (UnknownHostException e) {
             System.err.println("Trying to connect to unknown host: " + e);
@@ -102,25 +110,51 @@ public class EchoClient2 extends Thread implements ActionListener {
 			/*Scanner s = new Scanner(System.in); 文章用のスキャナー */
 			sendb.addActionListener(this);
 			sendb.setText("送信（send）");
-			textframe.setSize(540, 180);
+			textframe.setSize(840, 480);
 			textframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			texter.setSize(40, 10);
+			namaeran.setSize(10, 30);
+			JScrollPane texters = new JScrollPane(texter);
+			texters.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			texters.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		 	texters.setPreferredSize(new Dimension(200, 120));
+		 	
+			
 			tf.setSize(440, 50);
-			textfield.setSize(100, 30);
 			tf.add(textfield);
 			tf.add(sendb);
-			lb.add(label1);
+			FlowLayout layout = new FlowLayout();
+			JPanel textarea1 = new JPanel();
+			textarea1.setLayout(new FlowLayout(FlowLayout.CENTER));
+			JPanel nyuryoku = new JPanel();
 			Container contentpane1 = textframe.getContentPane();
 			Container contentpane2 = textframe.getContentPane();
+			Container buttonpane = textframe.getContentPane();
 			Container namaepane = textframe.getContentPane();
-			namael.setText("名前を設定してください。");
-			namaepane.add(namael, BorderLayout.EAST);
-			namaepane.add(namaeran, BorderLayout.CENTER);
-			contentpane1.add(tf, BorderLayout.SOUTH);
-			contentpane2.add(lb, BorderLayout.NORTH);
+			Container textareapane = textframe.getContentPane();
+			layout.setAlignment(FlowLayout.CENTER);
+			namaepane.setLayout(layout);
+			textarea1.add(texter);
+			textarea1.add(texters);
+			nyuryoku.add(namaeran);
+			nyuryoku.add(textfield);
+			nyuryoku.add(sendb);
+			nyuryoku.setLayout(layout);
+			namaepane.add(nyuryoku, BorderLayout.SOUTH);
+			contentpane1.add(textarea1, BorderLayout.PAGE_START);
+			
+			
+			
+			
+			texter.append("サーバーに接続しています・・・。" + "行先" + socket.getRemoteSocketAddress() + "\n");
+			
+			namael.setText("まず、名前を設定して、コメントを入力してください。");
+			
 			textframe.setVisible(true);
-
 			System.out.println(log + dat +"接続しました。"
 				+ socket.getRemoteSocketAddress());
+			texter.append("サーバーに接続しました。" + "行先" + socket.getRemoteSocketAddress() + "\n");
+			namael.setText("まず、名前を設定して、コメントを入力してください。" + "\n");
 			label1.setText(log + dat + "接続しました。" + socket.getRemoteSocketAddress());
 			//BufferedReader keyIn = new BufferedReader(new InputStreamReader(System.in));
 			//String success = log + dat + "接続しました。" + socket.getLocalPort();
@@ -161,6 +195,7 @@ public class EchoClient2 extends Thread implements ActionListener {
 
 			System.out.println("【文字列を読み込みます。】");
 			label1.setText("コメントを入力してください。");
+			
 			System.out.println("コメントを入力してください。");
 		} catch (IOException err) {
 			err.printStackTrace();

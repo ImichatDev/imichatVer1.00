@@ -37,7 +37,7 @@ import javax.swing.text.DefaultCaret;
 
 
 public class EchoServer extends Thread {
-	public static final int ECHO_PORT = 25565; //ポートを設定（ECHO_PORTはClientで使用）
+	public static final int ECHO_PORT = 30000; //ポートを設定（ECHO_PORTはClientで使用）
 	
     Socket clientSocket = null;
     static List<PrintStream> streamList = new ArrayList<>();
