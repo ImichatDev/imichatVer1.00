@@ -83,7 +83,6 @@ public class EchoClient2 extends Thread implements ActionListener {
             String responseLine2;
             while (true) {
                 responseLine = is.readLine();
-                responseLine2 = is.readLine();
                 if ("[close]".equals(responseLine) || responseLine == null) {
                     break;
                 }
