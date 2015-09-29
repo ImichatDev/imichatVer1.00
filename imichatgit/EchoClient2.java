@@ -192,6 +192,8 @@ public class EchoClient2 extends Thread implements ActionListener {
 			os.write(message.getBytes(Charset.forName("UTF-8")));
 			os.flush();
 
+			texter.append("Client:" + message);
+
 			System.out.println("【文字列を読み込みます。】");
 			label1.setText("コメントを入力してください。");
 			

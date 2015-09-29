@@ -40,6 +40,7 @@ public class EchoServer extends Thread {
 	public static final int ECHO_PORT = 30000; //ポートを設定（ECHO_PORTはClientで使用）
 	
     Socket clientSocket = null;
+    PrintStream myStream = null;
     static List<PrintStream> streamList = new ArrayList<>();
 
 	static JFrame frame1 = new JFrame();
@@ -89,7 +90,8 @@ public class EchoServer extends Thread {
         
         try {
             is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
-            streamList.add(new PrintStream(clientSocket.getOutputStream()));
+            myStream = new PrintStream(clientSocket.getOutputStream());
+            streamList.add(myStream);
 
             // クライアントからのメッセージを待ち、受け取ったメッセージをそのまま返す
             while ((line = is.readLine()) != null) {
@@ -101,6 +103,9 @@ public class EchoServer extends Thread {
                 line = line + "\n";
                 byte[] bytes = line.getBytes(Charset.forName("UTF-8"));
                 for (PrintStream os : streamList) {
+                    if (os == myStream) {
+                        continue;
+                    }
                     os.write(bytes);
                     os.flush();
                 }
