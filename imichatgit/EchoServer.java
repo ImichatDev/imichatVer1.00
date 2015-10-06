@@ -13,6 +13,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -95,6 +98,14 @@ public class EchoServer extends Thread {
 
             // クライアントからのメッセージを待ち、受け取ったメッセージをそのまま返す
             while ((line = is.readLine()) != null) {
+                if (line.startsWith("GET /index.html")) {
+                    String page = loadChatPage("chat.html");
+                    byte[] bytes = page.getBytes(Charset.forName("UTF-8"));
+                    myStream.write(bytes);
+                    myStream.flush();
+                    clientSocket.close();
+                    break;
+                }
 				Date dat = new Date();
 				String log = "[ログ]";
 				System.out.print(log + dat + "　　　" + "" + line + "\n");
@@ -121,7 +132,24 @@ public class EchoServer extends Thread {
 			logtx.append("エラーが発生したようです。サーバー側にエラーがあるか、クライアント側が不正に退出した可能性があります。");
         }
     }
-		
+
+    private String loadChatPage(String fileName) throws IOException {
+        String filePath = "imichatgit/kiki/" + "WebPage/" + fileName;
+        String page = "";
+        page += "HTTP/1.1 200 OK\r\n";
+        page += "Content-Type: text/html\r\n";
+        page += "\r\n";
+        File file = new File(filePath);
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        String line;
+        while ((line = br.readLine()) != null) {
+            page += line + "\n";
+        }
+        page += "\r\n";
+        return page;
+    }
+
 	static private void makeFrame() {
 
 		String logdata = "サーバーを開設しています。"; 
