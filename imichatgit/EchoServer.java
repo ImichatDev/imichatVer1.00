@@ -8,14 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.io.PrintStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -98,13 +91,26 @@ public class EchoServer extends Thread {
 
             // クライアントからのメッセージを待ち、受け取ったメッセージをそのまま返す
             while ((line = is.readLine()) != null) {
-                if (line.startsWith("GET /index.html")) {
-                    String page = loadChatPage("chat.html");
-                    byte[] bytes = page.getBytes(Charset.forName("UTF-8"));
-                    myStream.write(bytes);
-                    myStream.flush();
-                    clientSocket.close();
-                    break;
+                if (line.startsWith("GET /")) {
+                    String[] terms = line.split(" ");
+                    if (terms.length >= 2) {
+                        String url = terms[1];
+                        url = url.replaceAll(".*/", "");
+                        String page = "";
+                        page += "HTTP/1.1 200 OK\r\n";
+                        if (url.lastIndexOf(".html") > 0) {
+                            page += "Content-Type: text/html\r\n";
+                        }
+                        page += "\r\n";
+                        byte[] bytes = page.getBytes(Charset.forName("UTF-8"));
+                        myStream.write(bytes);
+                        byte[] body = loadChatPage(url);
+                        myStream.write(body);
+                        myStream.write("\r\n".getBytes(Charset.forName("UTF-8")));
+                        myStream.flush();
+                        clientSocket.close();
+                        break;
+                    }
                 }
 				Date dat = new Date();
 				String log = "[ログ]";
@@ -133,21 +139,14 @@ public class EchoServer extends Thread {
         }
     }
 
-    private String loadChatPage(String fileName) throws IOException {
-        String filePath = "imichatgit/kiki/" + "WebPage/" + fileName;
-        String page = "";
-        page += "HTTP/1.1 200 OK\r\n";
-        page += "Content-Type: text/html\r\n";
-        page += "\r\n";
+    private byte[] loadChatPage(String fileName) throws IOException {
+        String filePath = "imichatgit/kiki/" + fileName;
         File file = new File(filePath);
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-        String line;
-        while ((line = br.readLine()) != null) {
-            page += line + "\n";
-        }
-        page += "\r\n";
-        return page;
+        byte[] readBinary = new byte[(int)file.length()];
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        bis.read(readBinary);
+        return readBinary;
     }
 
 	static private void makeFrame() {
