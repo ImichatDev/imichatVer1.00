@@ -43,6 +43,8 @@ public class EchoServer extends Thread {
 	static JTextArea logtx = new JTextArea();
 	static JTextField textfl = new JTextField();
 	static Border border;
+	
+	static List<String> chatlog = new ArrayList<String>();
 
 	public static void main(String args[]) {
 
@@ -65,7 +67,7 @@ public class EchoServer extends Thread {
                 Socket clientSocket = echoServer.accept();
 				System.out.println("接続されました。"
 						+ clientSocket.getRemoteSocketAddress());
-				logtx.append("接続されました。" + clientSocket.getRemoteSocketAddress() + "\n");
+				//logtx.append("接続されました。" + clientSocket.getRemoteSocketAddress() + "\n");
                 EchoServer server = new EchoServer(clientSocket);
                 server.start();
             }
@@ -91,7 +93,28 @@ public class EchoServer extends Thread {
 
             // クライアントからのメッセージを待ち、受け取ったメッセージをそのまま返す
             while ((line = is.readLine()) != null) {
-                if (line.startsWith("GET /")) {
+                if (line.startsWith("GET /getlog")) {
+                    // ajax chat start
+                    System.out.println("ajax chat start");
+                    String page = "";
+                    page += "HTTP/1.1 200 OK\r\n";
+                    page += "Content-Type: text/html\r\n";
+                    page += "\r\n";
+                    byte[] bytes = page.getBytes(Charset.forName("UTF-8"));
+                    myStream.write(bytes);
+                    System.out.println(chatlog.size());
+                    for (int i = 0; i < chatlog.size(); i++) {
+                        String log = chatlog.get(i);
+                        System.out.println(i + " " + log);
+                        myStream.write(log.getBytes(Charset.forName("UTF-8")));
+                        myStream.write("\n".getBytes(Charset.forName("UTF-8")));
+                    }
+                    myStream.write("\r\n".getBytes(Charset.forName("UTF-8")));
+                    myStream.flush();
+                    clientSocket.close();
+                    break;
+                }
+                else if (line.startsWith("GET /")) {
                     String[] terms = line.split(" ");
                     if (terms.length >= 2) {
                         String url = terms[1];
@@ -117,6 +140,11 @@ public class EchoServer extends Thread {
 				System.out.print(log + dat + "　　　" + "" + line + "\n");
 				logtx.append("受信" + log + dat + "　　　" + "" + line + "\n");
                 System.out.println(line);
+                chatlog.add(dat.getTime() + "\t" + line);
+                System.out.println("size = " + chatlog.size());
+                if (chatlog.size() > 50) {
+                    chatlog = chatlog.subList(chatlog.size() - 50, chatlog.size());
+                }
                 line = line + "\n";
                 byte[] bytes = line.getBytes(Charset.forName("UTF-8"));
                 for (PrintStream os : streamList) {
@@ -135,7 +163,7 @@ public class EchoServer extends Thread {
         catch (IOException e) {
             System.out.println(e);
 			System.out.println("エラーが発生しました。");
-			logtx.append("エラーが発生したようです。サーバー側にエラーがあるか、クライアント側が不正に退出した可能性があります。");
+			//logtx.append("エラーが発生したようです。サーバー側にエラーがあるか、クライアント側が不正に退出した可能性があります。");
         }
     }
 
